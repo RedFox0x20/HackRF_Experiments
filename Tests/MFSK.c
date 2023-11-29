@@ -15,29 +15,52 @@ static int should_run = 1;
  * for a frequency at the given sample rate.
  * ---- SampleRate / Frequency = N  ----
  * 800kHz: 8000000 / 800000 = 10
- * 1200Hz: 8000000 / 1200 = 6666
+ * 1200Hz: 8000000 / 1200 = 6666 
  * 2400Hz: 8000000 / 2400 = 3333
  */
 #define F_CARRIER_LEN 10
-#define F_1200_LEN 3636
+#define F_1200_LEN 6666
+#define F_2400_LEN 3333
+#define F_3600_LEN 2222
 
 int tx_callback(hackrf_transfer* Transfer)
 {
     size_t i, j;
     static int n = 0;
-    static int ms = 0;
     static double CarrierAngle     = 0;
     static double CarrierAngleDiff = 2 * M_PI / F_CARRIER_LEN;
-    static double MarkSignalDiff   = 2 * M_PI / F_1200_LEN;
     const double ModulationDepth   = 4.0 / 3.0; 
+
+    const double FreqAngleDiffs[4] = 
+    {
+        0,
+        2 * M_PI / F_1200_LEN,
+        2 * M_PI / F_2400_LEN,
+        2 * M_PI / F_3600_LEN
+    };
+    const int Symbols[] = 
+    {
+        0, 1, 2, 3,
+        0, 0, 0, 0,
+        3, 2, 1, 0, 
+        3, 3, 3, 3
+    };
+    const int NumSymbols = 16;
+    static int SymbolIndex = 0;
 
     for (i = 0; i < Transfer->valid_length/2; i++, n++) 
     {
         /* Switch between MS frequencies 10 times per second */
-        if (n >= 800000) { ms ^= 1; n = 0; }
+        if (n >= SampleRate/10)
+        {
+            SymbolIndex = (SymbolIndex+1) % NumSymbols;
+            n = 0;
+        }
 
         CarrierAngle = fmodf(CarrierAngle + CarrierAngleDiff, 2*M_PI);
-        if (ms) { CarrierAngle = fmodf(CarrierAngle + MarkSignalDiff, 2 * M_PI); }
+        CarrierAngle = fmodf(
+            CarrierAngle + FreqAngleDiffs[Symbols[SymbolIndex]],
+            2*M_PI);
 
         Transfer->buffer[2*i] = (int8_t)(127.0 * cos(CarrierAngle));
 

@@ -15,12 +15,12 @@ static int should_run = 1;
  * for a frequency at the given sample rate.
  * ---- SampleRate / Frequency = N  ----
  * 800kHz: 8000000 / 800000 = 10
- * 1200Hz: 8000000 / 1200 = 3636
- * 2400Hz: 8000000 / 2400 = 6666
+ * 1200Hz: 8000000 / 1200 = 6666 
+ * 2400Hz: 8000000 / 2400 = 3333
  */
 #define F_CARRIER_LEN 10
-#define F_1200_LEN 3636
-#define F_2400_LEN 6666
+#define F_1200_LEN 6666
+#define F_2400_LEN 3333
 
 int tx_callback(hackrf_transfer* Transfer)
 {

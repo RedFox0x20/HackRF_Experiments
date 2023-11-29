@@ -5,7 +5,7 @@
 #include <signal.h>
 #include <libhackrf/hackrf.h>
 
-#define F_1200_LEN 3636
+#define F_1200_LEN 6666 
 #define F_CARRIER_LEN 10 
 
 const uint64_t TxFreq = 144000000L;
@@ -47,8 +47,12 @@ int main(int argc, char** argv)
         for (j = 0; j < F_CARRIER_LEN; j++)
         {
             CarrierAngle = j * 2 * M_PI / F_CARRIER_LEN;
-            BuffReal[i][j] = (int8_t)(127.0 * cos(CarrierAngle - ModulationDepth * cos(SignalAngle)));
-            BuffImag[i][j] = (int8_t)(127.0 * sin(CarrierAngle - ModulationDepth * cos(SignalAngle)));
+            BuffReal[i][j] = (int8_t)(
+                    127.0 * cos(
+                        CarrierAngle - ModulationDepth * cos(SignalAngle)));
+            BuffImag[i][j] = (int8_t)(
+                    127.0 * sin(
+                        CarrierAngle - ModulationDepth * cos(SignalAngle)));
         }
     }
 
@@ -57,8 +61,8 @@ int main(int argc, char** argv)
     hackrf_open(&HackRF);
     hackrf_set_sample_rate_manual(HackRF, SampleRate, 1);
     hackrf_set_baseband_filter_bandwidth(
-        HackRF,
-        hackrf_compute_baseband_filter_bw_round_down_lt(SampleRate));
+            HackRF,
+            hackrf_compute_baseband_filter_bw_round_down_lt(SampleRate));
     hackrf_set_txvga_gain(HackRF, Gain);
     hackrf_start_tx(HackRF, tx_callback, NULL);
     hackrf_set_freq(HackRF, TxFreq);

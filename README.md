@@ -3,5 +3,6 @@ Test signal generation for the HackRF
 
 # Tests
 - FM\_SingleTone.c: Transmit a constant tone under FM, Inspired by [Rufty/hackrf_beep](https://github.com/rufty/hackrf_beep)
-- FM\_FSK.c: Transmit a 10Bd FSK switching between 1200 and 2400Hz. Uses similar implementation to above
+- FM\_FSK.c: Transmit a 10Bd FM modulated FSK switching between 1200 and 2400Hz on an 800KHz carrier. Uses similar implementation to above
 - FSK.c: Transmit a 10Bd FSK switching between carrier 800KHz and 801.2KHz.
+- MFSK.c: Transmit a 10Bd MFSK using freqs carrier 800kHz + 1200, 2400, 3600Hz
