@@ -11,6 +11,6 @@ FM_TONE:
 	gcc -o build/FM_SingleTone Tests/FM_SingleTone.c $(LIBS)
 
 FM_FSK: 
-	gcc -o build/FM_FSK Tests/FM_SingleTone.c $(LIBS)
+	gcc -o build/FM_FSK Tests/FM_FSK.c $(LIBS)
 	
 
