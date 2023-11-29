@@ -8,7 +8,7 @@
 #define F_1200_LEN 3636
 #define F_CARRIER_LEN 10 
 
-const uint64_t TxFreq = 144000000L;// 7078000;
+const uint64_t TxFreq = 144000000L;
 const uint32_t SampleRate = 8000000;
 const uint32_t Gain = 47;
 static hackrf_device* HackRF = NULL;

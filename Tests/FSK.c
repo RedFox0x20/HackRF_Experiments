@@ -20,7 +20,6 @@ static int should_run = 1;
  */
 #define F_CARRIER_LEN 10
 #define F_1200_LEN 3636
-#define F_2400_LEN 6666
 
 int tx_callback(hackrf_transfer* Transfer)
 {
@@ -28,10 +27,8 @@ int tx_callback(hackrf_transfer* Transfer)
     static int n = 0;
     static int ms = 0;
     static double CarrierAngle     = 0;
-    static double SignalAngle      = 0;
     static double CarrierAngleDiff = 2 * M_PI / F_CARRIER_LEN;
-    static double MarkSignalDiff   = 2 * M_PI / F_2400_LEN;
-    static double SpaceSignalDiff  = 2 * M_PI / F_1200_LEN;
+    static double MarkSignalDiff   = 2 * M_PI / F_1200_LEN;
     const double ModulationDepth   = 4.0 / 3.0; 
 
     for (i = 0; i < Transfer->valid_length/2; i++, n++) 
@@ -39,16 +36,13 @@ int tx_callback(hackrf_transfer* Transfer)
         /* Switch between MS frequencies 10 times per second */
         if (n >= 800000) { ms ^= 1; n = 0; }
 
-        if (ms) { SignalAngle = fmodf(SignalAngle + MarkSignalDiff, 2 * M_PI); }
-        else { SignalAngle = fmodf(SignalAngle + SpaceSignalDiff, 2 * M_PI); }
-
-        Transfer->buffer[2*i] = (int8_t)(
-                127.0 * cos(CarrierAngle - ModulationDepth * cos(SignalAngle)));
-
-        Transfer->buffer[2*i+1] = (int8_t)(
-                127.0 * sin(CarrierAngle - ModulationDepth * cos(SignalAngle)));
-
         CarrierAngle = fmodf(CarrierAngle + CarrierAngleDiff, 2*M_PI);
+        if (ms) { CarrierAngle = fmodf(CarrierAngle + MarkSignalDiff, 2 * M_PI); }
+
+        Transfer->buffer[2*i] = (int8_t)(127.0 * cos(CarrierAngle));
+
+        Transfer->buffer[2*i+1] = (int8_t)(127.0 * sin(CarrierAngle));
+
     }
     return 0;
 }
