@@ -15,28 +15,29 @@ static int should_run = 1;
  * for a frequency at the given sample rate.
  * ---- SampleRate / Frequency = N  ----
  * 800kHz: 8000000 / 800000 = 10
- * 1200Hz: 8000000 / 1200 = 6666
- * 2400Hz: 8000000 / 2400 = 3333
  */
 #define F_CARRIER_LEN 10
-#define F_1200_LEN 3636
 
 int tx_callback(hackrf_transfer* Transfer)
 {
-    size_t i, j;
-    static int n = 0;
-    static int ms = 0;
+    size_t i;
     static double CarrierAngle     = 0;
     static double CarrierAngleDiff = 2 * M_PI / F_CARRIER_LEN;
-    static double MarkSignalDiff   = 2 * M_PI / F_1200_LEN;
 
-    for (i = 0; i < Transfer->valid_length/2; i++, n++) 
+    const double SweepLowFreq = 1;
+    const double SweepHighFreq = 4000;
+    const double SweepRate = 4;
+    const double SweepFreqDelta = 
+        ((SweepHighFreq - SweepLowFreq) / SampleRate) * SweepRate;
+    static double SweepFreq = SweepLowFreq;
+
+    for (i = 0; i < Transfer->valid_length/2; i++, SweepFreq += SweepFreqDelta) 
     {
-        /* Switch between MS frequencies 10 times per second */
-        if (n >= 800000) { ms ^= 1; n = 0; }
+        if (SweepFreq > SweepHighFreq) { SweepFreq = SweepLowFreq; }
+        const double SweepAngle = 2 * M_PI / (SampleRate / SweepFreq);
 
-        CarrierAngle = fmodf(CarrierAngle + CarrierAngleDiff, 2*M_PI);
-        if (ms) { CarrierAngle = fmodf(CarrierAngle + MarkSignalDiff, 2 * M_PI); }
+        CarrierAngle = fmodf(
+                CarrierAngle + CarrierAngleDiff + SweepAngle, 2*M_PI);
 
         Transfer->buffer[2*i] = (int8_t)(127.0 * cos(CarrierAngle));
 

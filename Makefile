@@ -2,7 +2,7 @@
 
 LIBS:=-lm -lhackrf
 
-all: FM_TONE FM_FSK FSK MFSK
+all: FM_TONE FM_FSK FSK MFSK SWEEP
 
 clean:
 	rm -rf ./build/*
@@ -18,3 +18,6 @@ FSK:
 
 MFSK:
 	gcc -o build/MFSK Tests/MFSK.c $(LIBS)
+
+SWEEP:
+	gcc -o build/Sweep Tests/Sweep.c $(LIBS)
