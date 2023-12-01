@@ -2,7 +2,7 @@
 
 LIBS:=-lm -lhackrf
 
-all: FM_TONE FM_FSK FSK MFSK SWEEP DEVICES
+all: FM_TONE FM_FSK FSK MFSK SWEEP SINESWEEP DEVICES
 
 clean:
 	rm -rf ./build/*
@@ -21,6 +21,9 @@ MFSK:
 
 SWEEP:
 	gcc -o build/Sweep Tests/Sweep.c $(LIBS)
+
+SINESWEEP:
+	gcc -o build/SineSweep Tests/SineSweep.c $(LIBS)
 
 DEVICES:
 	gcc -o build/ListDevices Tests/ListDevices.c $(LIBS)
